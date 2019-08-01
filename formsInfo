@@ -38,10 +38,13 @@ https://link.springer.com/chapter/10.1007/978-3-642-41278-3_24
 
 ***SOBRE O TRABALHO REALIZADO ATÉ O MOMENTO***
 Descreva, em termos técnicos, o que propuseram os autores do artigo selecionado (detalhar) *
-
+Os autores se propuseram a criar um modelo baseado em Naive Bayes, com o auxílio de diversas técnicas de PLN, para criar um classificador de sentimentos rápido e preciso.
+O classificador Naive Bayes é implementando utilizando a técnica de Laplacian Smoothing para evitar o problema de avaliar uma palavra que não pertencia ao conjunto de testes.
+Das técnicas de pré-processamento textual, realiza-se um procedimento para identificar quando uma determinada palavra deve ser considerada no contexto de sua negação e obtém-se as features desejadas como os tokens, bigramas e trigrams extraídos dos textos.
+Para a seleção das features mais relevantes para cada classe de texto (positivos e negativos) e verificação da quantidade mínima de features necessárias para alcançar a acurácia desejada, utiliza-se uma análise da informação mútua entre a presença ou não de uma feature em cada classe de texto.
 
 Quais são as partes do artigo que seu grupo de trabalho está implementando? (detalhar) *
-
+O grupo se propôs a implementar todas as etapas do artigo.
 
 Qual é o conjunto de dados que está usando para testar a implementação do artigo selecionado? *
 

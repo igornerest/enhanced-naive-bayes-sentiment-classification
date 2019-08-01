@@ -6,22 +6,22 @@ Membro 1: Nome completo *
 Lucas Ferraz Nicolau
 
 Membro 2: RA *
-
+11068616
 
 Membro 2: Nome completo *
-
+Ramon Neres Teixeira Jardim
 
 Membro 3: RA
 
 
 Membro 3: Nome completo
-
+Igor Neres Trindade
 
 Membro 4: RA
-
+11080516
 
 Membro 4: Nome completo
-
+Denildo Veloso Braga
 
 ***SOBRE O ARTIGO SELECIONADO***
 Título do artigo *
@@ -34,21 +34,26 @@ Ano de publicação *
 2013
 
 PDF do artigo científico *
-https://link.springer.com/chapter/10.1007/978-3-642-41278-3_24
+https://link.springer.com/chapter/10.1007/978-3-642-41278-3_24 (anexar no forms)
 
 ***SOBRE O TRABALHO REALIZADO ATÉ O MOMENTO***
 Descreva, em termos técnicos, o que propuseram os autores do artigo selecionado (detalhar) *
-Os autores se propuseram a criar um modelo baseado em Naive Bayes, com o auxílio de diversas técnicas de PLN, para criar um classificador de sentimentos rápido e preciso.
-O classificador Naive Bayes é implementando utilizando a técnica de Laplacian Smoothing para evitar o problema de avaliar uma palavra que não pertencia ao conjunto de testes.
-Das técnicas de pré-processamento textual, realiza-se um procedimento para identificar quando uma determinada palavra deve ser considerada no contexto de sua negação e obtém-se as features desejadas como os tokens, bigramas e trigrams extraídos dos textos.
-Para a seleção das features mais relevantes para cada classe de texto (positivos e negativos) e verificação da quantidade mínima de features necessárias para alcançar a acurácia desejada, utiliza-se uma análise da informação mútua entre a presença ou não de uma feature em cada classe de texto.
+Os autores se propuseram a criar um modelo baseado em Naive Bayes, com o auxílio de diversas técnicas de PLN, algumas vistas em aulas e outras inéditas, para criar um classificador de sentimentos rápido e preciso.
+O classificador Naive Bayes é implementado utilizando a técnica de Laplacian Smoothing, como apresentado durante as aulas de PLN, para evitar a má avaliação de uma palavra que não pertença ao conjunto de testes.	É apresentada também uma técnica denominada Negation Handling, que contribuiu de maneira significativa e se resume em realizar um procedimento para tratar negações, concatenando o advérbio de negação com palavras que são precedidas desse advérbio.
+Além disso, obtém-se as features desejadas como os tokens, bigramas e trigramas extraídos dos textos. Para a seleção das features mais relevantes para cada classe de texto (positivos e negativos) e verificação da quantidade mínima de features necessárias para alcançar a acurácia desejada, utiliza-se uma análise da informação mútua entre a presença ou não de uma feature em cada classe de texto.
 
 Quais são as partes do artigo que seu grupo de trabalho está implementando? (detalhar) *
-O grupo se propôs a implementar todas as etapas do artigo.
+O grupo se propôs a implementar todas as etapas do artigo. Havendo tempo hábil, podemos adicionar um algoritmo que tenta prever a nota dada pelo usuário baseada em sua review, uma vez que o dataset utilizado pelo artigo contém as notas dadas pelos usuários.
+-> Negation Handling,
+-> PMI
+-> Naive Bayes com Laplacian Smoothing
+-> feature selection com n-gramas
+-> atribuição de notas ao invés de classificação em pos/neg
+
 
 Qual é o conjunto de dados que está usando para testar a implementação do artigo selecionado? *
-
+A princípio, utilizaremos o mesmo dataset utilizado pelos autores do artigo (disponível em http://ai.stanford.edu/~amaas/data/sentiment/), devido à boa distribuição e organização dos dados. Além de estarem separados em dados de teste e treino, e dos dados de treino estarem separados em duas categorias, é possível ter fácil acesso à nota da review. Pensamos em expandir as contribuições feitas pelo artigo para a possível predição da nota de uma anaĺise de filme. Para isso, entretanto, deveremos tratar novamente os dados, a fim de obter dados de treinos equilibrados. Pensamos usar datasets em português, havendo tempo hábil para tal.
 
 Liste brevemente os resultados obtidos até o momento pelo seu grupo de trabalho. *
-
+Até o momento, estudamos o dataset, para arquitetar possíveis extensões às contribuições feitas pelos autores, como comentado nas respostas anteriores, e começamos pela atividades mais básicas e essenciais: dado um conjunto de texto em diferentes arquivos, reuni-los todos, tokenizando devidamente as palavras e fazendo a contabilidade em uma tabela de frequência. Decidimos por evitar o uso de biblioteca ao máximo e utilizar Jupyter Notebook a fim de ter uma visão geral de todo o trabalho de PLN feito pelo artigo. 
 

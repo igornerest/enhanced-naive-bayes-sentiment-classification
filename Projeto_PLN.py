@@ -14,8 +14,15 @@ negationRe = r"not|no|\w*n't"
 print("Digite o valor desejado para n-grams:")
 n = int(input())
 
-def readAndTokenize(directory):
-    return [ngrams(open(directory+'/'+filename, 'r', encoding='UTF-8').read().lower(), n) for filename in os.listdir(directory)]
+
+def readFile(directory, filename):
+    return open(directory+'/'+filename, 'r', encoding='UTF-8').read().lower()
+
+def readAndCountNgrams(directory, documentClass):
+    return [getFeatures(readFile(directory, filename), documentClass) for filename in os.listdir(directory)]
+
+def getFeatures(document, documentClass):
+    return (Counter(ngrams(nltk.word_tokenize(document), n)), documentClass)
 
 def negation_handling_ngram(words):
     negated = False
@@ -33,19 +40,19 @@ def negation_handling_ngram(words):
 start_read = time.time()
 print("Início da leitura dos arquivos.")
 posTrainDir = "./IMDB_dataset/train/pos"
-posTrainTokenList = readAndTokenize(posTrainDir)
+posTrainTokenList = readAndCountNgrams(posTrainDir, 'pos')
 posTrainSize = len(posTrainTokenList)
 
 negTrainDir = "./IMDB_dataset/train/neg"
-negTrainTokenList = readAndTokenize(negTrainDir)
+negTrainTokenList = readAndCountNgrams(negTrainDir, 'neg')
 negTranSize =  len(negTrainTokenList)
 
 posTestDir = "./IMDB_dataset/test/pos"
-posTestTokenList = readAndTokenize(posTestDir)
+posTestTokenList = readAndCountNgrams(posTestDir, 'pos')
 posTestSize = len(posTestTokenList)
 
 negTestDir = "./IMDB_dataset/test/neg"
-negTestTokenList = readAndTokenize(negTestDir)
+negTestTokenList = readAndCountNgrams(negTestDir, 'neg')
 negTestSize =  len(negTestTokenList)
 
 print("Fim da leitura dos arquivos.")
@@ -63,18 +70,8 @@ print("Total: {}".format(posTrainSize))
 print("Textos de treino com avaliação negativa:")
 print("Total: {}".format(len(os.listdir(negTrainDir))))
 
-
-trainDocuments = [(x, 'pos') for x in posTrainTokenList] + [(x, 'neg') for x in negTrainTokenList]
-testDocuments = [(x, 'pos') for x in posTestTokenList] + [(x, 'neg') for x in negTestTokenList]
-
-def document_features(document):
-    dict = Counter()
-    for word in document:
-        dict[word] += 1
-    return dict
-
-trainFeaturesets = [(document_features(d), c) for (d,c) in trainDocuments]
-testeFeaturesets = [(document_features(d), c) for (d,c) in testDocuments]
+trainFeaturesets = posTrainTokenList + negTrainTokenList
+testeFeaturesets = posTestTokenList + negTestTokenList
 
 train_set, test_set = trainFeaturesets, testeFeaturesets
 
@@ -93,11 +90,11 @@ print("--- %s seconds ---" % (time.time() - start_test))
 print("--- Tempo total: %s seconds ---" % (time.time() - start_program))
 
 avaliation = ''
-print('Digite sua avaliação (0 para sair)\n')
-while avaliation != '0':
-    avaliation = input()
-    if avaliation != '0':
-        print('Sua avaliação é ' + classifier.classify(document_features(avaliation)) +'\n')
+#print('Digite sua avaliação (0 para sair)\n')
+#while avaliation != '0':
+#    avaliation = input()
+#    if avaliation != '0':
+#        print('Sua avaliação é ' + classifier.classify(document_features(avaliation)) +'\n')
 
 
 #classifier.show_most_informative_features(5)

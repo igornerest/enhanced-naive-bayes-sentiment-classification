@@ -5,10 +5,11 @@ import re
 import numpy
 from collections import Counter
 from nltk.util import ngrams
+from collections import defaultdict as ddict
 
 start_program = time.time()
 
-regex = r"[-'a-zA-ZÀ-ÖØ-öø-ÿ]+"
+regex = r"[-'a-zA-ZÀ-ÖØ-öø-ÿ]+|[!?:;.,]"
 negationRe = r"not|no|\w*n't"
 
 print("Digite o valor desejado para n-grams:")
@@ -21,38 +22,58 @@ def readFile(directory, filename):
 def readAndCountNgrams(directory, documentClass):
     return [getFeatures(readFile(directory, filename), documentClass) for filename in os.listdir(directory)]
 
+def readAndTokenize(directory):
+    return [nltk.tokenize.regexp_tokenize(open(directory+'/'+filename, 'r', encoding='UTF-8').read().lower(), regex) for filename in os.listdir(directory)]
+
 def getFeatures(document, documentClass):
     return (Counter(ngrams(nltk.word_tokenize(document), n)), documentClass)
+counts = ddict(lambda: 0)
 
-def negation_handling_ngram(words):
-    negated = False
-    words_list = list()
+def makeNGrams(max_n, wordList):
+    # Caso especial: tupla vazia (util para o metodo 'probability')
+    # O valor eh igual ao numero de palavras
+    counts[()] += len(wordList)
 
+    # Conta os n-gramas para todos os tamanhos. Para trigramas: (), (    w), (w,w), (w,w,w) 
+    n_range = range(1, max_n + 1)
+    for i, word in enumerate(wordList):
+        for n in n_range:
+            if i+n <= len(wordList):
+                counts[tuple(wordList[i:i+n] )] += 1
+    
+def negate_sequence(words): 
+    negated = False 
+    punctuationMark = ["!", "?", ":", ";", ".", ","]    
+    ans = []
+    
     for word in words:
-        if (re.fullmatch(negationRe, word)):
-            negated = not negated
-        elif (negated):
-            word = "not_" + word
-        words_list.append(word)
+        if word in punctuationMark:
+            negated = False
+        else:
+            unigram = "not_" + word if negated else word
+            ans += [unigram]
 
-    return words_list
+            if word == "not" or word == "n't":
+                negated = not negated
+
+    return ans
 
 start_read = time.time()
 print("Início da leitura dos arquivos.")
 posTrainDir = "./IMDB_dataset/train/pos"
-posTrainTokenList = readAndCountNgrams(posTrainDir, 'pos')
+posTrainTokenList = readAndTokenize(posTrainDir)
 posTrainSize = len(posTrainTokenList)
 
 negTrainDir = "./IMDB_dataset/train/neg"
-negTrainTokenList = readAndCountNgrams(negTrainDir, 'neg')
+negTrainTokenList = readAndTokenize(negTrainDir)
 negTranSize =  len(negTrainTokenList)
 
 posTestDir = "./IMDB_dataset/test/pos"
-posTestTokenList = readAndCountNgrams(posTestDir, 'pos')
+posTestTokenList = readAndTokenize(posTestDir)
 posTestSize = len(posTestTokenList)
 
 negTestDir = "./IMDB_dataset/test/neg"
-negTestTokenList = readAndCountNgrams(negTestDir, 'neg')
+negTestTokenList = readAndTokenize(negTestDir)
 negTestSize =  len(negTestTokenList)
 
 print("Fim da leitura dos arquivos.")
@@ -75,19 +96,28 @@ testeFeaturesets = posTestTokenList + negTestTokenList
 
 train_set, test_set = trainFeaturesets, testeFeaturesets
 
-start_train = time.time()
+negated = []
+print ("Inicio da negacao")
+for ts in train_set:
+    negated += negate_sequence(ts)
+
+makeNGrams(n, negated)
+
+print(counts)
+
+#start_train = time.time()
 print("Início do treinamento.")
-classifier = nltk.NaiveBayesClassifier.train(train_set)
+#classifier = nltk.NaiveBayesClassifier.train(train_set)
 print("Fim do treinamento.")
-print("--- %s seconds ---" % (time.time() - start_train))
+#print("--- %s seconds ---" % (time.time() - start_train))
 
 print("Início dos testes.")
-start_test = time.time()
-print('Accuracy: ' + str(nltk.classify.accuracy(classifier, test_set)*100) + '%')
+#start_test = time.time()
+#print('Accuracy: ' + str(nltk.classify.accuracy(classifier, test_set)*100) + '%')
 print("Fim dos testes.")
-print("--- %s seconds ---" % (time.time() - start_test))
+#print("--- %s seconds ---" % (time.time() - start_test))
 
-print("--- Tempo total: %s seconds ---" % (time.time() - start_program))
+#print("--- Tempo total: %s seconds ---" % (time.time() - start_program))
 
 avaliation = ''
 #print('Digite sua avaliação (0 para sair)\n')

@@ -4,14 +4,18 @@ import os
 import re
 import numpy
 from collections import Counter
+from nltk.util import ngrams
 
 start_program = time.time()
 
 regex = r"[-'a-zA-ZÀ-ÖØ-öø-ÿ]+"
 negationRe = r"not|no|\w*n't"
 
+print("Digite o valor desejado para n-grams:")
+n = int(input())
+
 def readAndTokenize(directory):
-    return [nltk.tokenize.regexp_tokenize(open(directory+'/'+filename, 'r', encoding='UTF-8').read().lower(), regex) for filename in os.listdir(directory)]
+    return [ngrams(open(directory+'/'+filename, 'r', encoding='UTF-8').read().lower(), n) for filename in os.listdir(directory)]
 
 def negation_handling_ngram(words):
     negated = False
@@ -88,7 +92,7 @@ print("--- %s seconds ---" % (time.time() - start_test))
 
 print("--- Tempo total: %s seconds ---" % (time.time() - start_program))
 
-avaliation = '';
+avaliation = ''
 print('Digite sua avaliação (0 para sair)\n')
 while avaliation != '0':
     avaliation = input()

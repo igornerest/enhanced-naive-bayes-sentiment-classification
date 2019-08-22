@@ -68,8 +68,8 @@ def feature_selection(features):
     return { k: v for k, v in features.items() if v > 1 }
 
 def create_token_list(directory, docClass):
-    token = [item for sublist in readAndTokenize(directory) for item in sublist]
-    yield (feature_selection(makeNGrams(n, negate_sequence(token))), docClass)
+    for token in readAndTokenize(directory):
+        yield (makeNGrams(n, negate_sequence(token)), docClass)
 
 
 start_read = time.time()
@@ -79,39 +79,17 @@ posTrainDir = "./IMDB_dataset/train/pos"
 posTrainTokenList = list(create_token_list(posTrainDir, 'pos'))
 posTrainSize = len(posTrainTokenList)
 
-#posTrainTokenList = []
-#for tokens in readAndTokenize(posTrainDir):
-    #posTrainTokenList +=[(makeNGrams(n, negate_sequence(tokens)), 'pos')]
-    ##posTrainTokenList +=[(makeNGrams(n, tokens), 'pos')]
-
-
 negTrainDir = "./IMDB_dataset/train/neg"
 negTrainTokenList = list(create_token_list(negTrainDir, 'neg'))
 negTrainSize =  len(negTrainTokenList)
-
-# negTrainTokenList = [] 
-# for tokens in readAndTokenize(negTrainDir):
-#     negTrainTokenList += [(makeNGrams(n, negate_sequence(tokens)), 'neg')]
-#     #negTrainTokenList += [(makeNGrams(n, tokens), 'neg')]
 
 posTestDir = "./IMDB_dataset/test/pos"
 posTestTokenList = list(create_token_list(posTestDir, 'pos'))
 posTestSize = len(posTestTokenList)
 
-#posTestTokenList = []
-# for tokens in readAndTokenize(posTestDir):
-#     posTestTokenList += [(makeNGrams(n, negate_sequence(tokens)), 'pos')]
-#     #posTestTokenList += [(makeNGrams(n, tokens), 'pos')]
-
-
 negTestDir = "./IMDB_dataset/test/neg"
 negTestTokenList = list(create_token_list(negTestDir, 'neg'))
 negTestSize =  len(negTestTokenList)
-
-#negTestTokenList = []
-# for tokens in readAndTokenize(negTestDir):
-#     negTestTokenList += [(makeNGrams(n, negate_sequence(tokens)), 'neg')]
-#     #negTestTokenList += [(makeNGrams(n, tokens), 'neg')]
 
 print("Fim da leitura dos arquivos.")
 print("--- %.2f segundos ---" % (time.time() - start_read))
@@ -132,7 +110,6 @@ trainFeaturesets = posTrainTokenList + negTrainTokenList
 testeFeaturesets = posTestTokenList + negTestTokenList
 train_set, test_set = trainFeaturesets, testeFeaturesets
 
-print (train_set)
 start_train = time.time()
 print("Início do treinamento.")
 classifier = nltk.NaiveBayesClassifier.train(train_set)

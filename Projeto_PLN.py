@@ -68,8 +68,8 @@ def feature_selection(features):
     return { k: v for k, v in features.items() if v > 1 }
 
 def create_token_list(directory, docClass):
-    for token in readAndTokenize(directory):
-        yield (feature_selection(makeNGrams(n, negate_sequence(token))), docClass)
+    token = [item for sublist in readAndTokenize(directory) for item in sublist]
+    yield (feature_selection(makeNGrams(n, negate_sequence(token))), docClass)
 
 
 start_read = time.time()

@@ -27,20 +27,26 @@ def readAndTokenize(directory):
 
 def getFeatures(document, documentClass):
     return (Counter(ngrams(nltk.word_tokenize(document), n)), documentClass)
-counts = ddict(lambda: 0)
 
 def makeNGrams(max_n, wordList):
+    counts = dict()
     # Caso especial: tupla vazia (util para o metodo 'probability')
     # O valor eh igual ao numero de palavras
-    counts[()] += len(wordList)
 
     # Conta os n-gramas para todos os tamanhos. Para trigramas: (), (    w), (w,w), (w,w,w) 
     n_range = range(1, max_n + 1)
     for i, word in enumerate(wordList):
         for n in n_range:
             if i+n <= len(wordList):
-                counts[tuple(wordList[i:i+n] )] += 1
+                stri = ""
+                for s in wordList[i:i+n]:
+                    stri += s + " "
+                if str not in counts:
+                    counts[stri] = 0
+                counts[stri] += 1
     
+    return counts
+
 def negate_sequence(words): 
     negated = False 
     punctuationMark = ["!", "?", ":", ";", ".", ","]    
@@ -61,11 +67,15 @@ def negate_sequence(words):
 start_read = time.time()
 print("Início da leitura dos arquivos.")
 posTrainDir = "./IMDB_dataset/train/pos"
-posTrainTokenList = readAndTokenize(posTrainDir)
+posTrainTokenList = [()]
+for tokens in readAndTokenize(posTrainDir):
+    posTrainTokenList +=[(makeNGrams(n, negate_sequence(tokens)), 'pos')]
 posTrainSize = len(posTrainTokenList)
 
 negTrainDir = "./IMDB_dataset/train/neg"
-negTrainTokenList = readAndTokenize(negTrainDir)
+negTrainTokenList = [()] 
+for tokens in readAndTokenize(negTrainDir):
+    negTrainTokenList += [(makeNGrams(n, negate_sequence(tokens)), 'neg')]
 negTranSize =  len(negTrainTokenList)
 
 posTestDir = "./IMDB_dataset/test/pos"
@@ -93,23 +103,16 @@ print("Total: {}".format(len(os.listdir(negTrainDir))))
 
 trainFeaturesets = posTrainTokenList + negTrainTokenList
 testeFeaturesets = posTestTokenList + negTestTokenList
-
 train_set, test_set = trainFeaturesets, testeFeaturesets
 
-negated = []
-print ("Inicio da negacao")
-for ts in train_set:
-    negated += negate_sequence(ts)
 
-makeNGrams(n, negated)
+print(train_set)
 
-print(counts)
-
-#start_train = time.time()
+start_train = time.time()
 print("Início do treinamento.")
-#classifier = nltk.NaiveBayesClassifier.train(train_set)
+classifier = nltk.NaiveBayesClassifier.train(train_set)
 print("Fim do treinamento.")
-#print("--- %s seconds ---" % (time.time() - start_train))
+print("--- %s seconds ---" % (time.time() - start_train))
 
 print("Início dos testes.")
 #start_test = time.time()

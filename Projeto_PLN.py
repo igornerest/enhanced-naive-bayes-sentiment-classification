@@ -41,7 +41,7 @@ def makeNGrams(max_n, wordList):
                 stri = ""
                 for s in wordList[i:i+n]:
                     stri += s + " "
-                if str not in counts:
+                if stri not in counts:
                     counts[stri] = 0
                 counts[stri] += 1
     
@@ -64,9 +64,13 @@ def negate_sequence(words):
 
     return ans
 
+def feature_selection(features):
+    return { k: v for k, v in features.items() if v > 1 }
+
 def create_token_list(directory, docClass):
     for token in readAndTokenize(directory):
-        yield (makeNGrams(n, negate_sequence(token)), docClass)
+        yield (feature_selection(makeNGrams(n, negate_sequence(token))), docClass)
+
 
 start_read = time.time()
 print("Início da leitura, tokenização, n-gramas e negation handling.")
@@ -128,6 +132,7 @@ trainFeaturesets = posTrainTokenList + negTrainTokenList
 testeFeaturesets = posTestTokenList + negTestTokenList
 train_set, test_set = trainFeaturesets, testeFeaturesets
 
+print (train_set)
 start_train = time.time()
 print("Início do treinamento.")
 classifier = nltk.NaiveBayesClassifier.train(train_set)

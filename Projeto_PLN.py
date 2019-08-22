@@ -29,7 +29,7 @@ def getFeatures(document, documentClass):
     return (Counter(ngrams(nltk.word_tokenize(document), n)), documentClass)
 
 def makeNGrams(max_n, wordList):
-    counts = dict()
+    counts = {}
     # Caso especial: tupla vazia (util para o metodo 'probability')
     # O valor eh igual ao numero de palavras
 
@@ -59,7 +59,7 @@ def negate_sequence(words):
             unigram = "not_" + word if negated else word
             ans += [unigram]
 
-            if word == "not" or word == "n't":
+            if word == "not" or word == "no" or word.endswith("n't"):
                 negated = not negated
 
     return ans

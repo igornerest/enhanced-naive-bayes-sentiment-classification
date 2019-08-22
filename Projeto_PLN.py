@@ -64,65 +64,86 @@ def negate_sequence(words):
 
     return ans
 
+def create_token_list(directory, docClass):
+    for token in readAndTokenize(directory):
+        yield (makeNGrams(n, negate_sequence(token)), docClass)
+
 start_read = time.time()
-print("Início da leitura dos arquivos.")
+print("Início da leitura, tokenização, n-gramas e negation handling.")
+
 posTrainDir = "./IMDB_dataset/train/pos"
-posTrainTokenList = [()]
-for tokens in readAndTokenize(posTrainDir):
-    posTrainTokenList +=[(makeNGrams(n, negate_sequence(tokens)), 'pos')]
+posTrainTokenList = list(create_token_list(posTrainDir, 'pos'))
 posTrainSize = len(posTrainTokenList)
 
+#posTrainTokenList = []
+#for tokens in readAndTokenize(posTrainDir):
+    #posTrainTokenList +=[(makeNGrams(n, negate_sequence(tokens)), 'pos')]
+    ##posTrainTokenList +=[(makeNGrams(n, tokens), 'pos')]
+
+
 negTrainDir = "./IMDB_dataset/train/neg"
-negTrainTokenList = [()] 
-for tokens in readAndTokenize(negTrainDir):
-    negTrainTokenList += [(makeNGrams(n, negate_sequence(tokens)), 'neg')]
-negTranSize =  len(negTrainTokenList)
+negTrainTokenList = list(create_token_list(negTrainDir, 'neg'))
+negTrainSize =  len(negTrainTokenList)
+
+# negTrainTokenList = [] 
+# for tokens in readAndTokenize(negTrainDir):
+#     negTrainTokenList += [(makeNGrams(n, negate_sequence(tokens)), 'neg')]
+#     #negTrainTokenList += [(makeNGrams(n, tokens), 'neg')]
 
 posTestDir = "./IMDB_dataset/test/pos"
-posTestTokenList = readAndTokenize(posTestDir)
+posTestTokenList = list(create_token_list(posTestDir, 'pos'))
 posTestSize = len(posTestTokenList)
 
+#posTestTokenList = []
+# for tokens in readAndTokenize(posTestDir):
+#     posTestTokenList += [(makeNGrams(n, negate_sequence(tokens)), 'pos')]
+#     #posTestTokenList += [(makeNGrams(n, tokens), 'pos')]
+
+
 negTestDir = "./IMDB_dataset/test/neg"
-negTestTokenList = readAndTokenize(negTestDir)
+negTestTokenList = list(create_token_list(negTestDir, 'neg'))
 negTestSize =  len(negTestTokenList)
 
+#negTestTokenList = []
+# for tokens in readAndTokenize(negTestDir):
+#     negTestTokenList += [(makeNGrams(n, negate_sequence(tokens)), 'neg')]
+#     #negTestTokenList += [(makeNGrams(n, tokens), 'neg')]
+
 print("Fim da leitura dos arquivos.")
-print("--- %s seconds ---" % (time.time() - start_read))
+print("--- %.2f segundos ---" % (time.time() - start_read))
 
-print("Textos de treino com avaliação positiva")
+print("Textos de treino com avaliação positiva:")
 print("Total: {}".format(posTrainSize))
 
 print("Textos de treino com avaliação negativa:")
-print("Total: {}".format(len(os.listdir(negTrainDir))))
+print("Total: {}".format(negTrainSize))
 
-print("Textos de treino com avaliação positiva")
-print("Total: {}".format(posTrainSize))
+print("Textos de teste com avaliação positiva:")
+print("Total: {}".format(posTestSize))
 
-print("Textos de treino com avaliação negativa:")
-print("Total: {}".format(len(os.listdir(negTrainDir))))
+print("Textos de teste com avaliação negativa:")
+print("Total: {}".format(negTestSize))
 
 trainFeaturesets = posTrainTokenList + negTrainTokenList
 testeFeaturesets = posTestTokenList + negTestTokenList
 train_set, test_set = trainFeaturesets, testeFeaturesets
 
-
-print(train_set)
-
 start_train = time.time()
 print("Início do treinamento.")
 classifier = nltk.NaiveBayesClassifier.train(train_set)
+
 print("Fim do treinamento.")
-print("--- %s seconds ---" % (time.time() - start_train))
+print("--- %.2f segundos ---" % (time.time() - start_train))
 
 print("Início dos testes.")
-#start_test = time.time()
-#print('Accuracy: ' + str(nltk.classify.accuracy(classifier, test_set)*100) + '%')
+start_test = time.time()
+print('Acurácia: ' + str(nltk.classify.accuracy(classifier, test_set)*100) + '%')
 print("Fim dos testes.")
-#print("--- %s seconds ---" % (time.time() - start_test))
+print("--- %.2f segundos ---" % (time.time() - start_test))
 
-#print("--- Tempo total: %s seconds ---" % (time.time() - start_program))
+print("--- Tempo total: %.2f segundos ---" % (time.time() - start_program))
 
-avaliation = ''
+#avaliation = ''
 #print('Digite sua avaliação (0 para sair)\n')
 #while avaliation != '0':
 #    avaliation = input()

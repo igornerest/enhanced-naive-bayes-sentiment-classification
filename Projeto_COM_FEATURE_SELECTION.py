@@ -119,7 +119,12 @@ print("--- %.2f segundos ---" % (time.time() - start_train))
 
 print("Início dos testes.")
 start_test = time.time()
-print('Acurácia: ' + str(nltk.classify.accuracy(classifier, test_set)*100) + '%')
+posAccuracy = nltk.classify.accuracy(classifier, [(key, value) for key, value in test_set if value == 'pos'])
+negAccuracy = nltk.classify.accuracy(classifier, [(key, value) for key, value in test_set if value == 'neg'])
+totalAccuracy = (posAccuracy+negAccuracy)/2
+print('Acurácia da classe positiva: %.2f%%' % (posAccuracy*100))
+print('Acurácia da classe negativa: %.2f%%' % (negAccuracy*100))
+print('Acurácia: %.2f%%' % (totalAccuracy*100))
 print("Fim dos testes.")
 print("--- %.2f segundos ---" % (time.time() - start_test))
 
